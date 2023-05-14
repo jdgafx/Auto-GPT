@@ -41,8 +41,9 @@ def get_file(filename: str, agent_id: str):
 
 
 def list_files(agent_id: str):
-    blobs = bucket.list_blobs(prefix=f"godmode-files/{agent_id}/")
-    return [file.name for file in blobs]
+    prefix = f"godmode-files/{agent_id}/"
+    blobs = bucket.list_blobs(prefix=prefix)
+    return [file.name.replace(prefix, "") for file in blobs]
 
 
 def get_file_urls(agent_id: str):
