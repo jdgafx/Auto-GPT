@@ -18,5 +18,6 @@ def task_complete(reason: str, **kwargs):
         reason (str): The reason for shutting down.
     """
     print("Task done", reason)
+    return reason
     # logger.info(title="Shutting down...\n", message=reason)
     # quit()
