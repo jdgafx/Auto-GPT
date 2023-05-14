@@ -44,6 +44,25 @@ global_config = Config()
 
 START = "###start###"
 
+command_registry = CommandRegistry()
+
+command_categories = [
+    # "autogpt.commands.analyze_code",
+    # "autogpt.commands.audio_text",
+    # "autogpt.commands.execute_code",
+    # "autogpt.commands.file_operations",
+    "autogpt.commands.firestore_operations",
+    # "autogpt.commands.git_operations",
+    "autogpt.commands.google_search",
+    # "autogpt.commands.image_gen",
+    # "autogpt.commands.improve_code",
+    # "autogpt.commands.twitter",
+    # "autogpt.commands.web_selenium",
+    # "autogpt.commands.write_tests",
+    "autogpt.app",
+    "autogpt.commands.task_statuses",
+]
+
 
 def new_interact(
     cfg: Config,
@@ -71,26 +90,6 @@ def new_interact(
 
     # limit to 100 entries
     full_message_history = full_message_history[-100:]
-
-    command_registry = CommandRegistry()
-
-    command_categories = [
-        # "autogpt.commands.analyze_code",
-        # "autogpt.commands.audio_text",
-        # "autogpt.commands.execute_code",
-        # "autogpt.commands.file_operations",
-        "autogpt.commands.firestore_operations",
-        # "autogpt.commands.git_operations",
-        "autogpt.commands.google_search",
-        # "autogpt.commands.image_gen",
-        # "autogpt.commands.improve_code",
-        # "autogpt.commands.twitter",
-        # "autogpt.commands.web_selenium",
-        # "autogpt.commands.write_tests",
-        "autogpt.app",
-        "autogpt.commands.task_statuses",
-    ]
-    
     for command_category in command_categories:
         command_registry.import_commands(command_category)
 
