@@ -42,6 +42,8 @@ def write_to_file(filename: str, text: str, cfg, **kwargs):
     """
     write_file(text, filename, cfg.agent_id)
 
+    return f"Successfully wrote to {filename}"
+
 
 @command(
     "append_to_file", "Append to file", '"filename": "<filename>", "text": "<text>"'
@@ -64,6 +66,8 @@ def append_to_file(filename: str, append_text: str, should_log: bool = True, cfg
 
     text +=  "\n" + append_text
     write_file(text, filename, cfg.agent_id)
+
+    return f"Successfully appended to {filename}"
 
 
 @command("list_files", "List Files in Directory", '"directory": "<directory>"')
