@@ -48,7 +48,7 @@ def write_to_file(filename: str, text: str, cfg, **kwargs):
 @command(
     "append_to_file", "Append to file", '"filename": "<filename>", "text": "<text>"'
 )
-def append_to_file(filename: str, append_text: str, should_log: bool = True, cfg = None, **kwargs) -> None:
+def append_to_file(filename: str, text: str, should_log: bool = True, cfg = None, **kwargs) -> None:
     """Append text to a file
 
     Args:
@@ -64,7 +64,7 @@ def append_to_file(filename: str, append_text: str, should_log: bool = True, cfg
     except Exception as err:
         text = ""
 
-    text +=  "\n" + append_text
+    text +=  "\n" + text
     write_file(text, filename, cfg.agent_id)
 
     return f"Successfully appended to {filename}"
