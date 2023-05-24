@@ -80,7 +80,7 @@ def google_official_search(query: str, num_results: int = 8, **kwargs) -> str | 
         search_results = result.get("items", [])
 
         # Create a list of only the URLs from the search results
-        search_results_links = [f"{item['link']}: {item['snippet']}" for item in search_results]
+        search_results_links = [f"{item['link']} {item['title']}: {item['snippet']}" for item in search_results]
 
     except HttpError as e:
         # Handle errors in the API call
