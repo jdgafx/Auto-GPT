@@ -8,33 +8,36 @@ from duckduckgo_search import ddg
 from autogpt.commands.command import command
 from autogpt.config import Config
 
+from googleapiclient.discovery import build
+from googleapiclient.errors import HttpError
+
 global_config = Config()
 
 
-@command("google", "Google Search", '"query": "<query>"', not global_config.google_api_key)
-def google_search(query: str, num_results: int = 8, **kwargs) -> str:
-    """Return the results of a Google search
+# @command("google", "Google Search", '"query": "<query>"', not bool(global_config.google_api_key))
+# def google_search(query: str, num_results: int = 8, **kwargs) -> str:
+#     """Return the results of a Google search
 
-    Args:
-        query (str): The search query.
-        num_results (int): The number of results to return.
+#     Args:
+#         query (str): The search query.
+#         num_results (int): The number of results to return.
 
-    Returns:
-        str: The results of the search.
-    """
-    search_results = []
-    if not query:
-        return json.dumps(search_results)
+#     Returns:
+#         str: The results of the search.
+#     """
+#     search_results = []
+#     if not query:
+#         return json.dumps(search_results)
 
-    results = ddg(query, max_results=num_results)
-    if not results:
-        return json.dumps(search_results)
+#     results = ddg(query, max_results=num_results)
+#     if not results:
+#         return json.dumps(search_results)
 
-    for j in results:
-        search_results.append(j)
+#     for j in results:
+#         search_results.append(j)
 
-    results = json.dumps(search_results, ensure_ascii=False, indent=4)
-    return safe_google_results(results)
+#     results = json.dumps(search_results, ensure_ascii=False, indent=4)
+#     return safe_google_results(results)
 
 
 @command(
@@ -54,9 +57,6 @@ def google_official_search(query: str, num_results: int = 8, **kwargs) -> str | 
     Returns:
         str: The results of the search.
     """
-
-    from googleapiclient.discovery import build
-    from googleapiclient.errors import HttpError
 
     try:
         # Get the Google API key and Custom Search Engine ID from the config file
