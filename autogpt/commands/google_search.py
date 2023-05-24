@@ -40,12 +40,15 @@ global_config = Config()
 #     return safe_google_results(results)
 
 
+from googleapiclient.discovery import build
+from googleapiclient.errors import HttpError
+
 @command(
     "google",
     "Google Search",
     '"query": "<query>"',
-    bool(global_config.google_api_key),
-    "Configure google_api_key.",
+    bool(global_config.google_api_key) and bool(global_config.custom_search_engine_id),
+    "Configure google_api_key and custom_search_engine_id.",
 )
 def google_official_search(query: str, num_results: int = 8, **kwargs) -> str | list[str]:
     """Return the results of a Google search using the official Google API
@@ -110,7 +113,7 @@ def safe_google_results(results: str | list) -> str:
     """
     if isinstance(results, list):
         safe_message = json.dumps(
-            [result.encode("utf-8", "ignore") for result in results]
+            [result.encode("utf-8", "ignore").decode("utf-8") for result in results]
         )
     else:
         safe_message = results.encode("utf-8", "ignore").decode("utf-8")
