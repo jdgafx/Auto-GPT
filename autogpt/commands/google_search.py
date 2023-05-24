@@ -98,7 +98,7 @@ def google_official_search(query: str, num_results: int = 8, **kwargs) -> str | 
     # google_result can be a list or a string depending on the search results
 
     # Return the list of search result URLs
-    return "\n".join(safe_google_results(search_results_links))
+    return safe_google_results("\n".join(search_results_links))
 
 
 def safe_google_results(results: str | list) -> str:
