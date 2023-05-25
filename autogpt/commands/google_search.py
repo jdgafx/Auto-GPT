@@ -1,21 +1,25 @@
 """Google search command for Autogpt."""
 from __future__ import annotations
-from itertools import islice
 
 import json
 
+from itertools import islice
 from duckduckgo_search import DDGS
 
 from autogpt.commands.command import command
 from autogpt.config import Config
 
-from googleapiclient.discovery import build
-from googleapiclient.errors import HttpError
-
 global_config = Config()
 
+HEADERS = {
+    "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36",
+    "Referer": "https://duckduckgo.com/",
+}
+
+ddgs = DDGS(headers=HEADERS)
+
 @command("google", "Google Search", '"query": "<query>"')
-def google_search(query: str, num_results: int = 8) -> str:
+def google_search(query: str, num_results: int = 8, **kwargs) -> str:
     """Return the results of a Google search
 
     Args:
@@ -29,12 +33,17 @@ def google_search(query: str, num_results: int = 8) -> str:
     if not query:
         return json.dumps(search_results)
 
-    results = DDGS().text(query)
+    try:
+        results = ddgs.text(query, safesearch="Off")
+    except Exception as e:
+        print("DDG ERR:", e)
+        return json.dumps(search_results)
+
     if not results:
         return json.dumps(search_results)
 
-    for item in islice(results, num_results):
-        search_results.append(item)
+    for result in islice(results, num_results):
+        search_results.append(result)
 
     results = json.dumps(search_results, ensure_ascii=False, indent=4)
     return safe_google_results(results)
