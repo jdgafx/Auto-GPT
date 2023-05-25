@@ -123,7 +123,6 @@ def execute_command(
         # non-file is given, return instructions "Input should be a python
         # filepath, write your code to file and try again
         else:
-            print(command_name, prompt.commands)
             for command in prompt.commands:
                 if (
                     command_name == command["label"].lower()
