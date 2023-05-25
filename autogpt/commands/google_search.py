@@ -8,11 +8,13 @@ from duckduckgo_search import DDGS
 
 from autogpt.commands.command import command
 from autogpt.config import Config
+import random
 
 global_config = Config()
 
 HEADERS = {
-    "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36",
+    "User-Agent": random.sample(["Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36",
+                   "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:109.0) Gecko/20100101 Firefox/113.0"], k=1)[0],
     "Referer": "https://duckduckgo.com/",
 }
 
