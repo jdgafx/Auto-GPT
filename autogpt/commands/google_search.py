@@ -11,23 +11,26 @@ from autogpt.config import Config
 import random
 import os
 
-global_config = Config()
+# global_config = Config()
 
-HEADERS = {
-    "Referer": "https://duckduckgo.com/",
-    "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36"
-        if random.randint(0, 1) > 0.5 else "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:109.0) Gecko/20100101 Firefox/113.0",
-    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
-    "Accept-Language": "en-US,en;q=0.5",
-    "Upgrade-Insecure-Requests": "1",
-    "Sec-Fetch-Dest": "document",
-    "Sec-Fetch-Mode": "navigate",
-    "Sec-Fetch-Site": "same-origin",
-    "Sec-Fetch-User": "?1"
+# HEADERS = {
+#     "Referer": "https://duckduckgo.com/",
+#     "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36"
+#         if random.randint(0, 1) > 0.5 else "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:109.0) Gecko/20100101 Firefox/113.0",
+#     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+#     "Accept-Language": "en-US,en;q=0.5",
+#     "Upgrade-Insecure-Requests": "1",
+#     "Sec-Fetch-Dest": "document",
+#     "Sec-Fetch-Mode": "navigate",
+#     "Sec-Fetch-Site": "same-origin",
+#     "Sec-Fetch-User": "?1"
+# }
+# ddgs = DDGS(headers=HEADERS)
+
+headers = {
+    'X-API-KEY': os.environ.get("SERPER_API_KEY"),
+    'Content-Type': 'application/json'
 }
-
-
-ddgs = DDGS(headers=HEADERS)
 
 @command("google", "Google Search", '"query": "<query>"')
 def google_search(query: str, num_results: int = 8, **kwargs) -> str:
@@ -45,22 +48,19 @@ def google_search(query: str, num_results: int = 8, **kwargs) -> str:
     payload = json.dumps({
         "q": query,
     })
-    headers = {
-        'X-API-KEY': os.environ.get("SERPER_API_KEY"),
-        'Content-Type': 'application/json'
-    }
 
     response = requests.request("POST", url, headers=headers, data=payload)
 
-    results = response.json()["organic"]
+    results = response.json()
+    results = results["organic"]
 
     search_results = [{
         "title": r["title"],
         "link": r["link"],
         "snippet": r["snippet"]
-    } for r in results]
+    } for r in results[0:num_results]]
 
-    return safe_google_results(search_results)
+    return json.dumps(search_results, indent=1)
 
     # search_results = []
     # if not query:
