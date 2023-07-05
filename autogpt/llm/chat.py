@@ -172,7 +172,7 @@ def chat_with_ai(
                         new_events=newly_trimmed_messages,
                         cfg=cfg,
                     )
-                    current_context.insert(insertion_index, agent.summary_memory)
+                    current_context.insert(insertion_index, agent.summary_memory[:2500])
                 except Exception as e:
                     print_log("Error updating summary memory:", severity="warning", errorMsg=str(e))
 
