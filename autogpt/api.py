@@ -32,13 +32,13 @@ from autogpt.config import Config
 from autogpt.logs import logger
 from autogpt.memory import get_memory
 from autogpt.memory.pinecone import PineconeMemory
-from google.cloud import datastore, firestore
+from google.cloud import datastore, firestore, logging
 
 from autogpt.prompts.prompt import build_default_prompt_generator, construct_main_ai_config
 
 fireclient = firestore.Client()
-
 client = datastore.Client()
+logging_client = logging.Client()
 
 global_config = Config()
 
@@ -421,6 +421,14 @@ def godmode_main():
         ai_description = request_data["ai_description"]
         ai_goals = request_data["ai_goals"]
         message_history = request_data.get("message_history", [])
+
+        try:
+            rga = request_data.get("rga", None)
+            logger = logging_client.logger('rga-logger') 
+            extra_info = {"has_rga": rga}
+            logger.log_struct(info=extra_info, severity='INFO')
+        except Exception as e:
+            print_log("RGA logging failed", severity=WARNING, errorMsg=e)
 
         agent_id = request_data["agent_id"]
 

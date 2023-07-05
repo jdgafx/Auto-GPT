@@ -3,20 +3,29 @@ from __future__ import annotations
 
 import json
 
-from itertools import islice
 from duckduckgo_search import DDGS
+import requests
 
 from autogpt.commands.command import command
 from autogpt.config import Config
 import random
+import os
 
 global_config = Config()
 
 HEADERS = {
-    "User-Agent": random.sample(["Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36",
-                   "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:109.0) Gecko/20100101 Firefox/113.0"], k=1)[0],
     "Referer": "https://duckduckgo.com/",
+    "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36"
+        if random.randint(0, 1) > 0.5 else "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:109.0) Gecko/20100101 Firefox/113.0",
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+    "Accept-Language": "en-US,en;q=0.5",
+    "Upgrade-Insecure-Requests": "1",
+    "Sec-Fetch-Dest": "document",
+    "Sec-Fetch-Mode": "navigate",
+    "Sec-Fetch-Site": "same-origin",
+    "Sec-Fetch-User": "?1"
 }
+
 
 ddgs = DDGS(headers=HEADERS)
 
@@ -31,24 +40,46 @@ def google_search(query: str, num_results: int = 8, **kwargs) -> str:
     Returns:
         str: The results of the search.
     """
-    search_results = []
-    if not query:
-        return json.dumps(search_results)
+    url = "https://google.serper.dev/search"
 
-    try:
-        results = ddgs.text(query, safesearch="Off")
-    except Exception as e:
-        print("DDG ERR:", e)
-        return json.dumps(search_results)
+    payload = json.dumps({
+        "q": query,
+    })
+    headers = {
+        'X-API-KEY': os.environ.get("SERPER_API_KEY"),
+        'Content-Type': 'application/json'
+    }
 
-    if not results:
-        return json.dumps(search_results)
+    response = requests.request("POST", url, headers=headers, data=payload)
 
-    for result in islice(results, num_results):
-        search_results.append(result)
+    results = response.json()["organic"]
 
-    results = json.dumps(search_results, ensure_ascii=False, indent=4)
-    return safe_google_results(results)
+    search_results = [{
+        "title": r["title"],
+        "link": r["link"],
+        "snippet": r["snippet"]
+    } for r in results]
+
+    return safe_google_results(search_results)
+
+    # search_results = []
+    # if not query:
+    #     return json.dumps(search_results)
+
+    # try:
+    #     results = ddgs.text(query, safesearch="Off")
+    # except Exception as e:
+    #     print("DDG ERR:", e)
+    #     return json.dumps(search_results)
+
+    # if not results:
+    #     return json.dumps(search_results)
+
+    # for result in islice(results, num_results):
+    #     search_results.append(result)
+
+    # results = json.dumps(search_results, ensure_ascii=False, indent=4)
+    # return safe_google_results(results)
 
 
 # from googleapiclient.discovery import build
