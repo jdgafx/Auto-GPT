@@ -76,7 +76,7 @@ def new_interact(
 ):
     key = client.key("Agent", agent_id)
 
-    logger.set_level(logging.DEBUG if cfg.debug_mode else logging.INFO)
+    logger.set_level("INFO")
     # print(prompt)
     # Initialize variables
     next_action_count = 0
